@@ -131,7 +131,7 @@ public class MainView extends JFrame {
                             agentIdForApartamentUpdate
                     );
 
-                    UpdateApartamentDialog dialog = new UpdateApartamentDialog(MainView.this, apartament, agentIdForApartamentUpdate);
+                    UpdateApartamentDialog dialog = new UpdateApartamentDialog(MainView.this, apartament);
                     dialog.setVisible(true);
                     closeWindow(dialog);
                 } else {
@@ -215,33 +215,33 @@ public class MainView extends JFrame {
                 case "Apartamente" -> {
                     apartamentTable.setModel(ApartamentDao.loadApartamentData(connection));
 
-                    setButtonsState(
-                            List.of(insertButton),
-                            true);
+                    setButtonsState(List.of(insertButton), true);
                 }
                 case "Agenti" -> {
                     agentTable.setModel(AgentDao.loadAgentData(connection));
 
-                    setButtonsState(
-                            List.of(insertButton),
-                            true);
+                    setButtonsState(List.of(insertButton), true);
                 }
                 case "Apartamente etajul 2/3" -> {
                     filteredApartamentTable.setModel(ApartamentDao.getApartamenteOnFloor4(connection));
 
-                    setButtonsState(
-                            List.of(updateButton, deleteButton, insertButton),
-                            false);
+                    if (filteredApartamentTable.getRowCount() == 0) {
+                        JOptionPane.showMessageDialog(MainView.this, "No apartament was found", "No Apartament", JOptionPane.INFORMATION_MESSAGE);
+                    }
+
+                    setButtonsState(List.of(updateButton, deleteButton, insertButton), false);
                 }
 
-                case "Cautare Telefon" -> setButtonsState(
-                        List.of(updateButton, deleteButton, insertButton),
-                        false);
+                case "Cautare Telefon" -> setButtonsState(List.of(updateButton, deleteButton, insertButton), false);
+
                 case "Vanzari" -> {
                     agentTotalSales.setModel(AgentDao.getTotalAgentSales(connection));
-                    setButtonsState(
-                            List.of(updateButton, deleteButton, insertButton),
-                            false);
+
+                    if (agentTotalSales.getRowCount() == 0) {
+                        JOptionPane.showMessageDialog(MainView.this, "No agent was found", "No Agent", JOptionPane.INFORMATION_MESSAGE);
+                    }
+
+                    setButtonsState(List.of(updateButton, deleteButton, insertButton), false);
                 }
             }
         } catch (SQLException ex) {

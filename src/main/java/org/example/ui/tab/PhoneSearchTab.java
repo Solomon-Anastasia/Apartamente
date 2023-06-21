@@ -37,39 +37,44 @@ public class PhoneSearchTab extends JPanel {
         add(scrollPane, BorderLayout.CENTER);
 
         searchButton.addActionListener(e -> {
+            if (!telefonField.getText().matches("\\d{9}")) {
+                JOptionPane.showMessageDialog(this, "Incorrect telefon format.", "Telefon error", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+
+            if (telefonField.getText().isEmpty()) {
+                JOptionPane.showMessageDialog(PhoneSearchTab.this, "Please enter a phone number.", "Empty Field", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+
             String telefon = telefonField.getText();
-            if (!telefon.isEmpty()) {
-                try (Connection connection = DbConfig.getConnection()) {
-                    PreparedStatement statement = connection.prepareStatement(DbQuery.FIND_AGENT_BY_PHONE_NUMBER);
-                    statement.setString(1, telefon);
-                    ResultSet resultSet = statement.executeQuery();
+            try (Connection connection = DbConfig.getConnection()) {
+                PreparedStatement statement = connection.prepareStatement(DbQuery.FIND_AGENT_BY_PHONE_NUMBER);
+                statement.setString(1, telefon);
+                ResultSet resultSet = statement.executeQuery();
 
-                    DefaultTableModel model = new DefaultTableModel();
-                    model.setColumnIdentifiers(new String[]{"Nume", "Prenume", "Telefon", "Varsta"});
+                DefaultTableModel model = new DefaultTableModel();
+                model.setColumnIdentifiers(new String[]{"Nume", "Prenume", "Telefon", "Varsta"});
 
-                    while (resultSet.next()) {
-                        model.addRow(new Object[]{
-                                resultSet.getString("nume"),
-                                resultSet.getString("prenume"),
-                                resultSet.getString("telefon"),
-                                resultSet.getInt("virsta")
-                        });
-                    }
-
-                    resultTable.setModel(model);
-
-                    resultSet.close();
-                    statement.close();
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
+                while (resultSet.next()) {
+                    model.addRow(new Object[]{
+                            resultSet.getString("nume"),
+                            resultSet.getString("prenume"),
+                            resultSet.getString("telefon"),
+                            resultSet.getInt("virsta")
+                    });
                 }
-            } else {
-                JOptionPane.showMessageDialog(
-                        PhoneSearchTab.this,
-                        "Please enter a phone number.",
-                        "Empty Field",
-                        JOptionPane.INFORMATION_MESSAGE
-                );
+
+                resultTable.setModel(model);
+
+                resultSet.close();
+                statement.close();
+
+                if (resultTable.getRowCount() == 0) {
+                    JOptionPane.showMessageDialog(PhoneSearchTab.this, "No agent was found.", "No agent", JOptionPane.INFORMATION_MESSAGE);
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
             }
         });
     }

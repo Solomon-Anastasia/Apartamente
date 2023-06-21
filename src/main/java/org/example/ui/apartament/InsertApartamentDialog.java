@@ -14,12 +14,12 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class InsertApartamentDialog extends JDialog {
-    private JTextField etajField;
-    private JTextField nrCamereField;
-    private JTextField pretField;
-    private JTextField metriPatratiField;
-    private JComboBox<String> agentComboBox;
-    private JButton insertButton;
+    private final JTextField etajField;
+    private final JTextField nrCamereField;
+    private final JTextField pretField;
+    private final JTextField metriPatratiField;
+    private final JComboBox<String> agentComboBox;
+    private final JButton insertButton;
 
     public InsertApartamentDialog(JFrame parent) throws SQLException {
         super(parent, "Insert Apartament", true);
@@ -79,6 +79,27 @@ public class InsertApartamentDialog extends JDialog {
     }
 
     private void insertApartament() {
+        if (etajField.getText().isEmpty() || nrCamereField.getText().isEmpty()
+                || pretField.getText().isEmpty() || metriPatratiField.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Some of the fields are blank", "Blank fields", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        if (!etajField.getText().matches("^(1[0-5]|[1-9])$")) {
+            JOptionPane.showMessageDialog(this, "Building can only have 1-15 floors.", "Etaj error", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        if (!pretField.getText().matches("^\\d+(?:\\.\\d{1,2})?$")) {
+            JOptionPane.showMessageDialog(this, "Not suitable pret value.", "Pret error", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        if (!metriPatratiField.getText().matches("^\\d+(?:\\.\\d{1,2})?$")) {
+            JOptionPane.showMessageDialog(this, "Not suitable metri patrati value.", "Metraj error", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
         int etaj = Integer.parseInt(etajField.getText());
         int nrCamere = Integer.parseInt(nrCamereField.getText());
         double pret = Double.parseDouble(pretField.getText());

@@ -11,13 +11,13 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class UpdateAgentDialog extends JDialog {
-    private JTextField numeField;
-    private JTextField prenumeField;
-    private JTextField virstaField;
-    private JTextField telefonField;
-    private JButton updateButton;
+    private final JTextField numeField;
+    private final JTextField prenumeField;
+    private final JTextField virstaField;
+    private final JTextField telefonField;
+    private final JButton updateButton;
 
-    private int agentId;
+    private final int agentId;
 
     public UpdateAgentDialog(JFrame parent, Agent agent, int agentId) {
         super(parent, "Update Agent", true);
@@ -50,6 +50,22 @@ public class UpdateAgentDialog extends JDialog {
     }
 
     private void updateAgent() {
+        if (numeField.getText().isEmpty() || prenumeField.getText().isEmpty()
+                || virstaField.getText().isEmpty() || telefonField.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Some of the fields are blank", "Blank fields", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        if (!virstaField.getText().matches("^(1[8-9]|[2-7][0-9]|80)$")) {
+            JOptionPane.showMessageDialog(this, "Varsta shoul be between 18 and 80.", "Varsta error", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        if (!telefonField.getText().matches("\\d{9}")) {
+            JOptionPane.showMessageDialog(this, "Incorrect telefon format.", "Telefon error", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
         String nume = numeField.getText();
         String prenume = prenumeField.getText();
         int virsta = Integer.parseInt(virstaField.getText());

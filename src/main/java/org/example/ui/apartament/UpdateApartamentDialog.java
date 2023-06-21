@@ -11,23 +11,21 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class UpdateApartamentDialog extends JDialog {
-    private JTextField etajField;
-    private JTextField nrCamereField;
-    private JTextField pretField;
-    private JTextField metriPatratiField;
-    private JButton updateButton;
+    private final JTextField etajField;
+    private final JTextField nrCamereField;
+    private final JTextField pretField;
+    private final JTextField metriPatratiField;
+    private final JButton updateButton;
 
-    private Apartament apartament;
-    private int agentIdForApartamentUpdate;
+    private final Apartament apartament;
 
-    public UpdateApartamentDialog(JFrame parent, Apartament apartament, int agentIdForApartamentUpdate) {
+    public UpdateApartamentDialog(JFrame parent, Apartament apartament) {
         super(parent, "Update Apartament", true);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setSize(300, 200);
         setLocationRelativeTo(parent);
 
         this.apartament = apartament;
-        this.agentIdForApartamentUpdate = agentIdForApartamentUpdate;
 
         JPanel panel = new JPanel();
         panel.setLayout(new GridLayout(5, 2));
@@ -63,6 +61,27 @@ public class UpdateApartamentDialog extends JDialog {
     }
 
     private void updateApartament() {
+        if (etajField.getText().isEmpty() || nrCamereField.getText().isEmpty()
+                || pretField.getText().isEmpty() || metriPatratiField.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Some of the fields are blank", "Blank fields", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        if (!etajField.getText().matches("^(1[0-5]|[1-9])$")) {
+            JOptionPane.showMessageDialog(this, "Building can only have 1-15 floors.", "Etaj error", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        if (!pretField.getText().matches("^\\d+(?:\\.\\d{1,2})?$")) {
+            JOptionPane.showMessageDialog(this, "Not suitable pret value.", "Pret error", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        if (!metriPatratiField.getText().matches("^\\d+(?:\\.\\d{1,2})?$")) {
+            JOptionPane.showMessageDialog(this, "Not suitable metri patrati value.", "Metraj error", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
         int etaj = Integer.parseInt(etajField.getText());
         int nrCamere = Integer.parseInt(nrCamereField.getText());
         double pret = Double.parseDouble(pretField.getText());

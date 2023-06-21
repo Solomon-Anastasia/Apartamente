@@ -51,8 +51,23 @@ public class InsertAgentDialog extends JDialog {
         panel.add(insertButton);
 
         getContentPane().add(panel, BorderLayout.CENTER);
-
         insertButton.addActionListener(e -> {
+            if (nameField.getText().isEmpty() || surnameField.getText().isEmpty()
+                    || ageField.getText().isEmpty() || phoneField.getText().isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Some of the fields are blank", "Blank fields", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+
+            if (!ageField.getText().matches("^(1[8-9]|[2-7][0-9]|80)$")) {
+                JOptionPane.showMessageDialog(this, "Varsta shoul be between 18 and 80.", "Varsta error", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+
+            if (!phoneField.getText().matches("\\d{9}")) {
+                JOptionPane.showMessageDialog(this, "Incorrect telefon format.", "Telefon error", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+
             String name = nameField.getText();
             String surname = surnameField.getText();
             int age = Integer.parseInt(ageField.getText());
